@@ -1,0 +1,5 @@
+"login test"{
+"emailinput":"#email",
+"passwordinput":".password",
+"Submit":"Data-button",
+};
