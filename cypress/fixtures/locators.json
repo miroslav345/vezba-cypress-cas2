@@ -1,22 +1,19 @@
 {
-   "Common Elements": {
-        "emailField":"#email",
-        "passwordField":"#password",
-        "submitBtn":"button" 
-   },
-   "Header":{
-       "button":".nav-link"
-   },
-   "Register":{
-       "first-name":"#first-name",
-       "last-name":"#last-name",
-       "email":"#email",
-       "password":"#password",
-       "password-confirmation":"#password-confirmation",
-       "checkbox":":checkbox",
-       "submitBtn":"button"
-   }
+  "Common Elements": {
+    "emailField": "#email",
+    "passwordField": "#password",
+    "submitBtn": "button"
+  },
+  "Header": {
+    "button": ".nav-link"
+  },
+  "Register": {
+    "first-name": "#first-name",
+    "last-name": "#last-name",
+    "email": "#email",
+    "password": "#password",
+    "password-confirmation": "#password-confirmation",
+    "checkbox": ":checkbox",
+    "submitBtn": "button"
+  }
 }
-   
-
-

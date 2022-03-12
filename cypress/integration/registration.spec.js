@@ -1,113 +1,94 @@
-/// <reference types="Cypress" />
+import { registerPage } from "../pageObjects/registrationPOM";
+const { faker } = require("@faker-js/faker");
 
-describe("registration test", () => {
-  beforeEach("visit ref=gister page", () => {
+describe("register user", () => {
+  let userData = {
+    randomFirstName: faker.name.firstName(),
+    randomLastName: faker.name.lastName(),
+    randomEmail: faker.internet.email(),
+    usedEmail: "markopzs1@test.com",
+    invalidEmail: "markopzs1@testcom",
+    randomPassword: faker.internet.password(),
+    randomPassword2: faker.internet.password(),
+  };
+
+  beforeEach("visit registration page", () => {
     cy.visit("/register");
     cy.url().should("contain", "/register");
   });
 
-  it("register without first name", () => {
-    cy.get("#last-name").type("prezime");
-    cy.get("#email").type("test+@mail.com");
-    cy.get("#password").type("Test12345!");
-    cy.get("#password-confirmation").type("Test12345!");
-    cy.get(":checkbox").check();
-    cy.get("button").click();
+  it("without first-name", () => {
+    registerPage.register(
+      " ",
+      userData.randomLastName,
+      userData.randomEmail,
+      userData.randomPassword,
+      userData.randomPassword
+    );
+    registerPage.firstName.should("be.empty");
   });
 
-  it("register without last name", () => {
-    cy.get("#first-name").type("ime");
-    cy.get("#email").type("test+@mail.com");
-    cy.get("#password").type("Test12345!");
-    cy.get("#password-confirmation").type("Test12345!");
-    cy.get(":checkbox").check();
-    cy.get("button").click();
+  it("without last-name", () => {
+    registerPage.register(
+      userData.randomFirstName,
+      " ",
+      userData.randomEmail,
+      userData.randomPassword,
+      userData.randomPassword
+    );
+    registerPage.lastName.should("be.empty");
   });
 
-  it("register with invalid email", () => {
-    cy.get("#first-name").type("ime");
-    cy.get("#last-name").type("prezime");
-    cy.get("#email").type("test+mail.com");
-    cy.get("#password").type("Test12345!");
-    cy.get("#password-confirmation").type("Test12345!");
-    cy.get(":checkbox").check();
-    cy.get("button").click();
+  it("invalid email", () => {
+    registerPage.register(
+      userData.randomFirstName,
+      userData.randomLastName,
+      userData.invalidEmail,
+      userData.randomPassword,
+      userData.randomPassword
+    );
+    cy.url().should("contains", "/register");
+    cy.get("p")
+      .should("have.class", "alert")
+      .and("have.text", "The email must be a valid email address.");
+    //cy.get('p').should('have.text', 'The email must be a valid email address.');  //prebaceno u liniju iznad
+    registerPage.input.then((el) => {
+      //provera koliko input polja imamo na stranici
+      console.log(el);
+      expect(el.length - 1).eq(5);
+      expect(el.selector).to.eq("input");
+    });
   });
 
-  it("register with invalid password confirmation", () => {
-    cy.visit("/register");
-    cy.get("#first-name").type("ime");
-    cy.get("#last-name").type("prezime");
-    cy.get("#email").type("test+@mail.com");
-    cy.get("#password").type("Test12345!");
-    cy.get("#password-confirmation").type("Test12345");
-    cy.get(":checkbox").check();
-    cy.get("button").click();
+  it("already used email", () => {
+    registerPage.register(
+      userData.randomFirstName,
+      userData.randomLastName,
+      userData.usedEmail,
+      userData.randomPassword,
+      userData.randomPassword
+    );
+    registerPage.alert.should("have.class", "alert");
   });
 
-  it("register withhout checking terms and conditions", () => {
-    cy.visit("/register");
-    cy.get("#first-name").type("ime");
-    cy.get("#last-name").type("prezime");
-    cy.get("#email").type("test+@mail.com");
-    cy.get("#password").type("Test12345!");
-    cy.get("#password-confirmation").type("Test12345!");
-    cy.get("button").click();
+  it("password-confirmation invalid", () => {
+    registerPage.register(
+      userData.randomFirstName,
+      userData.randomLastName,
+      userData.randomEmail,
+      userData.randomPassword,
+      userData.randomPassword2
+    );
+    registerPage.alert.should("have.class", "alert");
   });
 
-  it("register with valid data", () => {
-    cy.get("#first-name").type("ime");
-    cy.get("#last-name").type("prezime");
-    cy.get("#email").type("test+@mail.com");
-    cy.get("#password").type("Test12345!");
-    cy.get("#password-confirmation").type("Test12345!");
-    cy.get(":checkbox").check();
-    cy.get("button").click();
+  it("valid registration", () => {
+    registerPage.register(
+      userData.randomFirstName,
+      userData.randomLastName,
+      userData.randomEmail,
+      userData.randomPassword,
+      userData.randomPassword
+    );
   });
 });
-class RegisterPage {
-  get registerHeading() {
-    return cy.get("h1");
-  }
-
-  get firstNameField() {
-    return cy.get("#first-name");
-  }
-
-  get lastNameField() {
-    return cy.get("#last-name");
-  }
-
-  get emailField() {
-    return cy.get("#email");
-  }
-
-  get passwordField() {
-    return cy.get("#password");
-  }
-
-  get passwordConfirmationField() {
-    return cy.get("#password-confirmation");
-  }
-
-  get checkbox() {
-    return cy.get(":checkbox");
-  }
-
-  get submitBtn() {
-    return cy.get("button");
-  }
-
-  register(firstName, lastName, email, password) {
-    this.firstNameField.type(firstName);
-    this.lastNameField.type(lastName);
-    this.emailField.type(email);
-    this.passwordField.type(password);
-    this.passwordConfirmationField.type(password);
-
-    this.checkbox.check();
-    this.submitBtn.click();
-  }
-}
-
-export const registerPage = new RegisterPage();

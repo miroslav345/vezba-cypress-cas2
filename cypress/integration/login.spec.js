@@ -23,18 +23,28 @@ it("logout", () => {
   cy.get(".nav-link").should("have.length", 4);
   cy.get(".nav-link").eq(3).click();
 });
-it("login with valid crdentials", ()=>{
-  loginPage.login("filip.nedovic1@vivifyideas.com","test12345!")
-  cy.get('p').should('be.visible')
-  .and('have.text','Bad Credentials')
-  .and("have.css","border-color","rgb(245, 198, 203)");
+it("login with valid crdentials", () => {
+  cy.intercept({
+    method: "POST",
+    url: "https://gallery-api.vivifyideas.com/api/auth/login",
+  }).as("loginRequest");
+  loginPage.login("filip.nedovic1@vivifyideas.com", "test12345!");
+  cy.get("p")
+    .should("be.visible")
+    .and("have.text", "Bad Credentials")
+    .and("have.css", "border-color", "rgb(245, 198, 203)");
 
-loginPage.loginHeading.should("be.visible")
-login.pageloginHeading.should("have.text","Bad credentials")
-.and("have.css","border-color","rgb(245, 198, 203)")
-.and("have.css","color","rgb ()")
-})
-it ("login with invalid credentials", ()=>{
-  loginHeading.emailField.should("have.text","must valid addres")
-  .and("randomEmail","require")
-})
+  loginPage.loginHeading.should("be.visible");
+  login.pageloginHeading
+    .should("have.text", "Bad credentials")
+    .and("have.css", "border-color", "rgb(245, 198, 203)")
+    .and("have.css", "color", "rgb ()");
+});
+it("login with invalid credentials", () => {
+  loginHeading.emailField
+    .should("have.text", "must valid addres")
+    .and("randomEmail", "require");
+});
+cy.wait("@loginRequest").then((interceptObj) => {
+  expect(interceptObj.response.statusCode).eq(200);
+});

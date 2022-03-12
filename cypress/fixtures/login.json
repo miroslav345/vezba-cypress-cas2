@@ -1,5 +1,7 @@
-"login test"{
-"emailinput":"#email",
-"passwordinput":".password",
-"Submit":"Data-button",
-};
+{
+  "loginTest": {
+    "emailinput": "#email",
+    "passwordinput": ".password",
+    "Submit": "Data-button"
+  }
+}

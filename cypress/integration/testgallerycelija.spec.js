@@ -1,16 +1,16 @@
-import { loginPage } from "../page_objects_modeling/loginPOM.spec";
+import { loginPage } from "../pageObjects/loginPOM.spec";
 
 describe("celija test", () => {
   beforeEach("log into the app", () => {
     cy.visit("/login");
-    loginPage.login("filip.nedovic@vivifyideas.com", "Test12345!");
+    loginPage.login("bla12345@bla.com", "bla12345");
     cy.get("h1").should("be.visible").and("have.text", "All Galleries");
   });
 
   it("test h2 u svim celijama", () => {
     cy.get(".cell").each((celija) => {
       expect(celija.find("h2")).to.exist;
-      expect(celija.find("p")).to.have.text("Author");
+      expect(celija.find("p")).contain("Author:");
     });
   });
 
